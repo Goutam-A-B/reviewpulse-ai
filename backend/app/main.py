@@ -17,13 +17,11 @@ from app.health import health_report
 
 app = FastAPI(title="ReviewPulse AI", version="0.1.0-phase1")
 
-_settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[_settings.frontend_origin, "http://localhost:3000"],
-    # Accept any Vercel deploy (production + preview URLs) so a URL mismatch in
-    # FRONTEND_ORIGIN can't silently block the browser.
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    # Public, read-only API — permissive CORS for the hosted demo so no Vercel
+    # URL (production or preview) is ever blocked. Tighten if auth is added.
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

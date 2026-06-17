@@ -42,7 +42,7 @@ class ReportRequest(BaseModel):
     store_app_id: str | None = None
     start: datetime | None = None
     end: datetime | None = None
-    limit: int = 300
+    limit: int = 100  # bounded cold scrape — keeps Render free-tier RAM/time in check
     deep: bool = False  # Deep Analysis: opt into a higher (still bounded) premium budget
 
 
