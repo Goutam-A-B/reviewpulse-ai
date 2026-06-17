@@ -138,11 +138,39 @@ class QdrantVectorStore:
             return 0
         from qdrant_client.models import PointStruct
 
+        await self._ensure_collection(len(points[0].vector))
         await self._client().upsert(
             collection_name=self._settings.qdrant_collection,
             points=[PointStruct(id=p.id, vector=p.vector, payload=p.payload) for p in points],
         )
         return len(points)
+
+    async def _ensure_collection(self, dim: int) -> None:
+        """Create the collection (+ payload indexes) on first use, so a fresh cloud
+        cluster self-provisions and the deployed cold-start path just works."""
+        from qdrant_client.models import Distance, PayloadSchemaType, VectorParams
+
+        client = self._client()
+        existing = [c.name for c in (await client.get_collections()).collections]
+        if self._settings.qdrant_collection in existing:
+            return
+        await client.create_collection(
+            collection_name=self._settings.qdrant_collection,
+            vectors_config=VectorParams(size=dim, distance=Distance.COSINE),
+        )
+        for field, schema in (
+            ("review_date", PayloadSchemaType.DATETIME),
+            ("rating", PayloadSchemaType.INTEGER),
+            ("app_id", PayloadSchemaType.KEYWORD),
+            ("platform", PayloadSchemaType.KEYWORD),
+            ("theme_id", PayloadSchemaType.KEYWORD),
+        ):
+            try:
+                await client.create_payload_index(
+                    self._settings.qdrant_collection, field_name=field, field_schema=schema
+                )
+            except Exception:  # noqa: BLE001 - index optional (e.g. embedded Qdrant)
+                pass
 
     async def count(self, f: ReviewFilter | None = None) -> int:
         res = await self._client().count(
