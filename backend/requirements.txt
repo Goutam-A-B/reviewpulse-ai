@@ -1,0 +1,27 @@
+# Phase 0 core (needed for the app + /health)
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic-settings>=2.4
+
+# Data layer (lazy-imported; health degrades gracefully if absent)
+sqlalchemy[asyncio]>=2.0
+asyncpg>=0.29
+qdrant-client>=1.11
+
+# Model-abstraction adapters (wired from P2/P4/P5; safe to install now)
+fastembed>=0.3            # bge-small-en-v1.5 via ONNX, no PyTorch (EC-P0-06)
+groq>=0.11                # reasoning loop + Critic (P4)
+google-genai>=0.3         # single synthesis call, Gemini 2.5 Flash (P5)
+
+# Phase 1 — Review Collector (store scrapers, lazy-imported)
+google-play-scraper>=1.2
+app-store-scraper>=0.3
+
+# Phase 2 — Enrichment (local, deterministic)
+numpy>=1.26
+scikit-learn>=1.4
+vaderSentiment>=3.3
+
+# Dev / tests
+pytest>=8.0
+pytest-asyncio>=0.23

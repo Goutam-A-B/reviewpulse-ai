@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Env / secrets
+.env
+*.env
+.env.local
+!.env.example
+!.env.local.example
+
+# Node / Next
+node_modules/
+.next/
+out/
+npm-debug.log*
+yarn-error.log*
+
+# Model / ONNX caches
+.fastembed_cache/
+*.onnx
+
+# Local embedded Qdrant storage
+qdrant_data/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,29 @@
+# Local, zero-signup stack for a real end-to-end run (needs Docker).
+# After `docker compose up -d`, set in backend/.env:
+#   DATABASE_URL=postgresql://reviewpulse:reviewpulse@localhost:5432/reviewpulse
+#   QDRANT_URL=http://localhost:6333
+# The schema auto-applies on first Postgres start; then bootstrap Qdrant:
+#   cd backend && python -m scripts.bootstrap_qdrant
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: reviewpulse
+      POSTGRES_PASSWORD: reviewpulse
+      POSTGRES_DB: reviewpulse
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+      - reviewpulse_pg:/var/lib/postgresql/data
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - reviewpulse_qdrant:/qdrant/storage
+
+volumes:
+  reviewpulse_pg:
+  reviewpulse_qdrant:
