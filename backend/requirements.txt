@@ -15,7 +15,9 @@ google-genai>=0.3         # single synthesis call, Gemini 2.5 Flash (P5)
 
 # Phase 1 — Review Collector (store scrapers, lazy-imported)
 google-play-scraper>=1.2
-app-store-scraper>=0.3
+# NOTE: app-store-scraper is intentionally omitted — it pins requests==2.23.0
+# (urllib3<1.26), which conflicts with qdrant-client (urllib3>=1.26.14). The Android
+# path is primary; `pip install app-store-scraper` separately for best-effort iOS.
 
 # Phase 2 — Enrichment (local, deterministic)
 numpy>=1.26

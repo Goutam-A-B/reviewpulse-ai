@@ -13,6 +13,7 @@ from app.ingestion.collector.base import (
     AppNotFound,
     CollectorResult,
     ResolvedApp,
+    ScraperUnavailable,
     with_retries,
 )
 from app.ingestion.schemas import AppRef, Platform, RawReview
@@ -28,7 +29,12 @@ class AppStoreCollector:
         return ResolvedApp(self.platform, store_app_id, ref.name or store_app_id, ref.store_url)
 
     def collect(self, ref: AppRef, limit: int) -> CollectorResult:
-        from app_store_scraper import AppStore
+        try:
+            from app_store_scraper import AppStore
+        except ImportError as exc:  # not bundled in deployment (dependency conflict)
+            raise ScraperUnavailable(
+                "App Store ingestion is not enabled in this deployment; use the Android path."
+            ) from exc
 
         resolved = self.resolve(ref)
 
