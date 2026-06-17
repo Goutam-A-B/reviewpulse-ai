@@ -20,7 +20,10 @@ app = FastAPI(title="ReviewPulse AI", version="0.1.0-phase1")
 _settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[_settings.frontend_origin],
+    allow_origins=[_settings.frontend_origin, "http://localhost:3000"],
+    # Accept any Vercel deploy (production + preview URLs) so a URL mismatch in
+    # FRONTEND_ORIGIN can't silently block the browser.
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_methods=["*"],
     allow_headers=["*"],
 )
