@@ -1,6 +1,8 @@
 import type { Keyword, ReportResponse } from "./types";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+// Defaults to the deployed backend so the hosted dashboard works without any
+// build-time env var. Set NEXT_PUBLIC_API_URL to override (e.g. localhost for dev).
+const API = process.env.NEXT_PUBLIC_API_URL ?? "https://reviewpulse-ai-oavt.onrender.com";
 
 export type ReportQuery = {
   app_id?: string;
