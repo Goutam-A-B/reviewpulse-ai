@@ -3,6 +3,13 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+# onnxruntime (via fastembed) and scikit-learn need OpenMP at runtime; the slim
+# image doesn't ship it, which otherwise crashes embedding/clustering with a
+# missing libgomp.so.1.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
